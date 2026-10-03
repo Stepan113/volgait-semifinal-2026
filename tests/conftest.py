@@ -8,6 +8,7 @@ from selenium.common.exceptions import WebDriverException
 def browser():
     options = webdriver.ChromeOptions()
     options.add_argument("--headless=new")
+    options.add_argument("--window-size=1280,900")
     driver = webdriver.Chrome(options=options)
     yield driver
     driver.quit()
