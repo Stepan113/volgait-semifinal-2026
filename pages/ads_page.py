@@ -50,7 +50,10 @@ class AdsPage:
         ).get_attribute("textContent").strip()
 
     def close_button(self):
-        return self.browser.find_element(*self.CLOSE)
+        # Окно может появиться чуть раньше кнопки закрытия.
+        return WebDriverWait(self.browser, 5).until(
+            EC.element_to_be_clickable(self.CLOSE)
+        )
 
     @allure.step("Закрыть рекламу кнопкой ×")
     def close_ad(self):
