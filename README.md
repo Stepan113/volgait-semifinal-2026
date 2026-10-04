@@ -1,17 +1,6 @@
 # Лабораторная работа 1 — автоматизация тестирования
 
-Учебный проект для проверки сайта https://practice-automation.com/ с помощью PyTest и Selenium.
-
-## Структура проекта
-
-- `tests/test_home_page.py` — базовая проверка главной страницы.
-- `tests/test_calendar.py` — позитивные и негативные проверки календаря.
-- `pages/calendar_page.py` — действия и элементы страницы Calendars (Page Object).
-- `tests/test_modals.py` — позитивные и негативные проверки модальных окон.
-- `pages/modals_page.py` — действия с окнами страницы Modals (Page Object).
-- `pages/form_fields_page.py` — чтение списка Automation tools через Selenium.
-- `tests/conftest.py` — запуск и закрытие Chrome, скриншот при падении теста.
-- `pytest.ini` — поиск тестов и сохранение результатов Allure.
+Тестовые сценарии для сайта https://practice-automation.com/ и команды для их запуска.
 
 ## Главная страница
 
@@ -75,48 +64,108 @@
 | N02 | Открыть Form Modal и отправить форму с пустым Name. | Ошибка `This field is required.`, подтверждения нет. |
 | N03 | Ввести имя и неверный email, затем отправить форму. | Ошибка `Please enter a valid email address`, подтверждения нет. |
 
-## Запуск в PyCharm
+## Страница Ads
 
-1. Открыть проект и проверить интерпретатор: `.venv/bin/python` этого проекта.
-2. Убедиться, что зависимости из `requirements.txt` установлены.
-3. Нажать правой кнопкой на `tests/test_modals.py` и выбрать **Run pytest**. Можно запустить всю папку `tests`.
+Адрес: https://practice-automation.com/ads/
 
-Каждый тест запускает отдельный Chrome/Chromium в фоновом режиме. На Ubuntu с Chromium из Snap используется установленный ChromeDriver, без поиска и загрузки другого браузера. Чтобы видеть браузер, временно закомментируйте строку `options.add_argument("--headless=new")` в `tests/conftest.py`.
+Рекламное окно появляется автоматически через несколько секунд после открытия страницы. Его можно закрыть кнопкой ×. Пока окно открыто, оно перекрывает элементы страницы. Escape и нажатие на затемнённый фон не закрывают рекламу.
 
-## Запуск в терминале
+### Позитивные сценарии
+
+| № | Действие | Ожидаемый результат |
+| --- | --- | --- |
+| P01 | Открыть Ads. | Видны заголовок страницы и сообщение о скором появлении рекламы. |
+| P02 | Открыть Ads и дождаться рекламы. | Рекламное окно появилось автоматически. |
+| P03 | Дождаться рекламы и прочитать её. | Показаны заголовок `Hi` и текст `I am an ad.` |
+| P04 | Дождаться рекламы и проверить кнопку ×. | Кнопка закрытия видна и доступна. |
+| P05 | Дождаться рекламы и нажать ×. | Рекламное окно скрыто. |
+| P06 | Закрыть рекламу и нажать ссылку Home. | Открылась главная страница. |
+| P07 | Закрыть рекламу и подождать дольше задержки автопоказа. | Окно не появляется повторно без обновления страницы. |
+
+### Негативные сценарии
+
+| № | Действие | Ожидаемый результат |
+| --- | --- | --- |
+| N01 | Во время показа рекламы нажать Escape. | Окно остаётся открытым. |
+| N02 | Нажать на затемнённый фон вокруг рекламы. | Окно остаётся открытым. |
+| N03 | Попытаться нажать ссылку Home под открытой рекламой. | Клик перехвачен рекламой, перехода нет. |
+
+## Запуск тестов
+
+Все команды выполняйте **из корня скопированного репозитория**: в текущем каталоге должны находиться `README.md`, `requirements.txt` и `pytest.ini`. Если терминал открыт в каталоге, где лежит папка проекта, сначала перейдите в неё (например, `cd volgait-semifinal`, если папка так называется).
+
+Понадобятся:
+
+1. **Python 3.10 или новее**. Если Python не установлен, скачайте его с [официального сайта](https://www.python.org/downloads/). На Windows при установке отметьте **Add Python to PATH**.
+2. **Google Chrome** или **Chromium**. [Установка Chrome](https://support.google.com/chrome/answer/95346?hl=en); на Ubuntu при необходимости можно установить Chromium командой `sudo snap install chromium` ([инструкция Snap](https://snapcraft.io/install/chromium/ubuntu)).
+3. Доступ в интернет: тесты обращаются к `practice-automation.com`. При первом запуске Selenium может скачать подходящий ChromeDriver. Если используется Chromium из Ubuntu Snap, проект берёт установленный вместе с ним драйвер.
+
+Браузер запускается в фоновом режиме. Открывать Chrome вручную перед тестами не нужно. Allure CLI для запуска тестов тоже не нужен.
+
+### Linux (терминал Bash)
+
+Проверьте версию Python, создайте виртуальное окружение, установите зависимости и запустите все тесты:
 
 ```bash
-.venv/bin/python -m pip install -r requirements.txt
-.venv/bin/python -m pytest -v
+python3 --version
+python3 -m venv .venv
+./.venv/bin/python -m pip install -r requirements.txt
+./.venv/bin/python -m pytest -v
 ```
 
-Только календарь:
+Если на Ubuntu команда создания окружения сообщает, что модуль `venv` недоступен, установите его и повторите `python3 -m venv .venv`:
 
 ```bash
-.venv/bin/python -m pytest tests/test_calendar.py -v
+sudo apt install python3-venv
 ```
 
-Только модальные окна:
+### Windows (PowerShell)
 
-```bash
-.venv/bin/python -m pytest tests/test_modals.py -v
+Откройте PowerShell в корне репозитория и выполните:
+
+```powershell
+py -3 --version
+py -3 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m pytest -v
 ```
 
-## Отчёт Allure
+Если команда `py` не найдена, замените `py -3` в первых двух строках на `python`. Версия должна быть не ниже 3.10. Активация окружения не требуется: команды обращаются к его Python напрямую.
 
-PyTest автоматически сохраняет результаты в `allure-results/` в корне проекта, независимо от рабочего каталога PyCharm. При падении теста с работающим браузером к результату прикладывается скриншот. Папка очищается перед каждым запуском тестов.
+### Запуск отдельного упражнения
 
-Для просмотра нужен отдельный Allure CLI. С Allure 2:
+После установки зависимостей можно указать нужный файл тестов. Команды выполняются из корня репозитория.
+
+Linux:
 
 ```bash
+./.venv/bin/python -m pytest tests/test_calendar.py -v
+./.venv/bin/python -m pytest tests/test_modals.py -v
+./.venv/bin/python -m pytest tests/test_ads.py -v
+```
+
+Windows PowerShell:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest tests/test_calendar.py -v
+.\.venv\Scripts\python.exe -m pytest tests/test_modals.py -v
+.\.venv\Scripts\python.exe -m pytest tests/test_ads.py -v
+```
+
+### Просмотр отчёта Allure
+
+После каждого запуска результаты автоматически записываются в `allure-results/` в корне репозитория. Перед следующим запуском эта папка очищается. При ошибке теста к результату прикладывается скриншот.
+
+Для графического отчёта отдельно установите **Allure Report CLI**: [Windows](https://allurereport.org/docs/v2/install-for-windows/) или [Linux](https://allurereport.org/docs/v2/install-for-linux/). Пакет `allure-pytest` из `requirements.txt` сохраняет результаты, но не устанавливает CLI. После установки Allure 2 выполните из корня репозитория на любой ОС:
+
+```text
+allure --version
 allure serve allure-results
 ```
 
-С Allure 3:
+Команда `allure serve` соберёт отчёт и откроет его в браузере. Если установлен Allure 3, используйте:
 
-```bash
+```text
 allure generate allure-results
 allure open allure-report
 ```
-
-Страница Ads будет добавлена на следующем этапе работы.
