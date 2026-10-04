@@ -1,4 +1,4 @@
-# Лабораторная работа 1 — автоматизация тестирования
+# Полуфинальное решение "Волга-IT" для автоматизации тестирования
 
 Тестовые сценарии для сайта https://practice-automation.com/ и команды для их запуска.
 
@@ -92,28 +92,32 @@
 
 ## Запуск тестов
 
-Все команды выполняйте **из корня скопированного репозитория**: в текущем каталоге должны находиться `README.md`, `requirements.txt` и `pytest.ini`. Если терминал открыт в каталоге, где лежит папка проекта, сначала перейдите в неё (например, `cd volgait-semifinal`, если папка так называется).
+Команды ниже рассчитаны на запуск с нуля: сначала клонируйте проект с GitHub, затем создайте виртуальное окружение, установите зависимости и запустите тесты. Откройте терминал в папке, куда хотите скачать проект. После команды `cd volgait-semifinal-2026` все остальные команды выполняйте в этой папке.
 
 Понадобятся:
 
-1. **Python 3.10 или новее**. Если Python не установлен, скачайте его с [официального сайта](https://www.python.org/downloads/). На Windows при установке отметьте **Add Python to PATH**.
-2. **Google Chrome** или **Chromium**. [Установка Chrome](https://support.google.com/chrome/answer/95346?hl=en); на Ubuntu при необходимости можно установить Chromium командой `sudo snap install chromium` ([инструкция Snap](https://snapcraft.io/install/chromium/ubuntu)).
-3. Доступ в интернет: тесты обращаются к `practice-automation.com`. При первом запуске Selenium может скачать подходящий ChromeDriver. Если используется Chromium из Ubuntu Snap, проект берёт установленный вместе с ним драйвер.
+1. **Git** для скачивания репозитория. Если Git не установлен, установите его с [официального сайта](https://git-scm.com/downloads).
+2. **Python 3.10 или новее**. Если Python не установлен, скачайте его с [официального сайта](https://www.python.org/downloads/). На Windows при установке отметьте **Add Python to PATH**.
+3. **Google Chrome** или **Chromium**. [Установка Chrome](https://support.google.com/chrome/answer/95346?hl=en); на Ubuntu при необходимости можно установить Chromium командой `sudo snap install chromium` ([инструкция Snap](https://snapcraft.io/install/chromium/ubuntu)).
+4. Доступ в интернет: тесты обращаются к `practice-automation.com`. При первом запуске Selenium может скачать подходящий ChromeDriver. Если используется Chromium из Ubuntu Snap, проект берёт установленный вместе с ним драйвер.
 
 Браузер запускается в фоновом режиме. Открывать Chrome вручную перед тестами не нужно. Allure CLI для запуска тестов тоже не нужен.
 
 ### Linux (терминал Bash)
 
-Проверьте версию Python, создайте виртуальное окружение, установите зависимости и запустите все тесты:
+Откройте терминал Bash и выполните команды по порядку:
 
 ```bash
+git clone https://github.com/Stepan113/volgait-semifinal-2026.git
+cd volgait-semifinal-2026
 python3 --version
 python3 -m venv .venv
-./.venv/bin/python -m pip install -r requirements.txt
-./.venv/bin/python -m pytest -v
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python -m pytest -v
 ```
 
-Если на Ubuntu команда создания окружения сообщает, что модуль `venv` недоступен, установите его и повторите `python3 -m venv .venv`:
+После активации окружения в начале приглашения терминала появится `(.venv)`. Если на Ubuntu команда создания окружения сообщает, что модуль `venv` недоступен, установите его и повторите `python3 -m venv .venv`:
 
 ```bash
 sudo apt install python3-venv
@@ -121,35 +125,35 @@ sudo apt install python3-venv
 
 ### Windows (PowerShell)
 
-Откройте PowerShell в корне репозитория и выполните:
+Откройте PowerShell в папке, куда хотите скачать проект, и выполните команды по порядку:
 
 ```powershell
+git clone https://github.com/Stepan113/volgait-semifinal-2026.git
+cd volgait-semifinal-2026
 py -3 --version
 py -3 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python -m pytest -v
+```
+
+После активации окружения в начале приглашения PowerShell появится `(.venv)`. Если команда `py` не найдена, замените `py -3` в командах проверки версии и создания окружения на `python`. Версия должна быть не ниже 3.10.
+
+Если PowerShell запрещает запуск `Activate.ps1`, можно пропустить активацию и обратиться к Python внутри окружения напрямую:
+
+```powershell
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe -m pytest -v
 ```
 
-Если команда `py` не найдена, замените `py -3` в первых двух строках на `python`. Версия должна быть не ниже 3.10. Активация окружения не требуется: команды обращаются к его Python напрямую.
-
 ### Запуск отдельного упражнения
 
-После установки зависимостей можно указать нужный файл тестов. Команды выполняются из корня репозитория.
+Если виртуальное окружение активировано, отдельное упражнение можно запустить из корня проекта одной из этих команд. Они одинаковы для Linux и Windows:
 
-Linux:
-
-```bash
-./.venv/bin/python -m pytest tests/test_calendar.py -v
-./.venv/bin/python -m pytest tests/test_modals.py -v
-./.venv/bin/python -m pytest tests/test_ads.py -v
-```
-
-Windows PowerShell:
-
-```powershell
-.\.venv\Scripts\python.exe -m pytest tests/test_calendar.py -v
-.\.venv\Scripts\python.exe -m pytest tests/test_modals.py -v
-.\.venv\Scripts\python.exe -m pytest tests/test_ads.py -v
+```text
+python -m pytest tests/test_calendar.py -v
+python -m pytest tests/test_modals.py -v
+python -m pytest tests/test_ads.py -v
 ```
 
 ### Просмотр отчёта Allure
